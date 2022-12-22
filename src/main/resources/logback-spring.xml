@@ -1,93 +1,94 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="10 seconds">
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
 
-    <property name="LOG_FILE_NAME" value="logback"/>
-    <property name="LOG_DEBUG_PATH" value="/home/ec2-user/app/logs/debug"/>
-    <property name="LOG_HIBERNATE_PATH" value="/home/ec2-user/app/logs/hibernate"/>
-    <property name="LOG_API_PATH" value="/home/ec2-user/app/logs/apis"/>
-    <property name="LOG_ERROR_PATH" value="/home/ec2-user/app/logs/error"/>
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="LOG_PATH" value="./logs" />
+    <property name="LOG_BACKUP" value="./logs/backup" />
+    <property name="LOG_CHILD_INFO" value="info"/>
+    <property name="LOG_CHILD_WARN" value="warn"/>
+    <property name="LOG_CHILD_ERROR" value="error"/>
+    <property name="LOG_FILE_NAME" value="ivolve-us-server" />
 
-    <springProfile name="local">
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-    </springProfile>
+    <!--콘솔 로그 appender-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
 
-    <springProfile name="prod">
-        <appender name="ERROR-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                <level>ERROR</level>
-                <onMatch>ACCEPT</onMatch>
-                <onMismatch>DENY</onMismatch>
-            </filter>
-            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <charset>UTF-8</charset>
-                <pattern>${FILE_LOG_PATTERN}</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_ERROR_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}-%d{yyyy.MM.dd}-%i.log</fileNamePattern>
-                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                    <maxFileSize>10MB</maxFileSize>
-                </timeBasedFileNamingAndTriggeringPolicy>
-                <maxHistory>30</maxHistory>
-            </rollingPolicy>
-        </appender>
+    <!-- 파일 로그 info appender-->
+    <appender name="FILE-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_CHILD_INFO}/${BY_DATE}-info.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_BACKUP}/${LOG_CHILD_INFO}/%d{yyyy-MM-dd}-info.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
 
-        <appender name="ROLLING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <charset>UTF-8</charset>
-                <pattern>${FILE_LOG_PATTERN}</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_DEBUG_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}-%d{yyyy.MM.dd}-%i.log</fileNamePattern>
-                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                    <maxFileSize>10MB</maxFileSize>
-                </timeBasedFileNamingAndTriggeringPolicy>
-                <maxHistory>30</maxHistory>
-            </rollingPolicy>
-        </appender>
+    <!-- 파일 로그 warn appender-->
+    <appender name="FILE-WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_CHILD_WARN}/${BY_DATE}-warn.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_BACKUP}/${LOG_CHILD_WARN}/%d{yyyy-MM-dd}-warn.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
 
-        <appender name="HIBERNATE-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <charset>UTF-8</charset>
-                <pattern>${FILE_LOG_PATTERN}</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_HIBERNATE_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}-%i.log
-                </fileNamePattern>
-                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                    <maxFileSize>10MB</maxFileSize>
-                </timeBasedFileNamingAndTriggeringPolicy>
-                <maxHistory>30</maxHistory>
-            </rollingPolicy>
-        </appender>
+    <!-- 파일 로그 error appender-->
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_CHILD_ERROR}/${BY_DATE}-error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_BACKUP}/${LOG_CHILD_ERROR}/%d{yyyy-MM-dd}-error.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
 
-        <appender name="API-LOG-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <charset>UTF-8</charset>
-                <pattern>${FILE_LOG_PATTERN}</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_API_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}-%i.log
-                </fileNamePattern>
-                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                    <maxFileSize>10MB</maxFileSize>
-                </timeBasedFileNamingAndTriggeringPolicy>
-                <maxHistory>30</maxHistory>
-            </rollingPolicy>
-        </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE-INFO"/>
+        <appender-ref ref="FILE-WARN"/>
+        <appender-ref ref="FILE-ERROR"/>
+    </root>
 
-        <root level="INFO">
-            <appender-ref ref="ROLLING-FILE"/>
-            <appender-ref ref="ERROR-FILE"/>
-        </root>
-        <logger name="org.hibernate.SQL" level="DEBUG">
-            <appender-ref ref="HIBERNATE-FILE"/>
-        </logger>
-        <logger name="team.nine.booknutsbackend.config.LogConfig" level="INFO">
-            <appender-ref ref="API-LOG-FILE"/>
-        </logger>
-    </springProfile>
 </configuration>
