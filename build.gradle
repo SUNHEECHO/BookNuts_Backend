@@ -2,11 +2,12 @@ plugins {
 	id 'org.springframework.boot' version '2.6.7'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.jetbrains.kotlin.jvm' version '1.6.21'
 }
 
 group = 'team.nine'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
@@ -19,6 +20,7 @@ jar {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
@@ -49,8 +51,22 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	runtimeOnly 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "17"
+	}
+}
+
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "17"
+	}
 }
