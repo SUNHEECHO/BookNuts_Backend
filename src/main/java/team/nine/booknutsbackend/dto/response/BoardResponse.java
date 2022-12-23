@@ -72,6 +72,8 @@ public class BoardResponse {
     private static Boolean getIsArchived(Board board, User user) {
         List<ArchiveBoard> archiveBoards = user.getArchiveBoards();
         for (ArchiveBoard archiveBoard : archiveBoards) {
+            System.out.println(archiveBoard.getBoard());
+            System.out.println(board);
             if (archiveBoard.getBoard().equals(board)) return true;
         }
         return false;

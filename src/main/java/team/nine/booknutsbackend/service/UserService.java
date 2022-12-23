@@ -25,6 +25,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AwsS3Service awsS3Service;
 
+    //Todo: UserService와 AuthService 분리 + 이미지 등록 Image(File)Service 분리
     //회원가입
     @Transactional
     public User join(MultipartFile file, User user) {

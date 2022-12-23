@@ -1,6 +1,7 @@
 package team.nine.booknutsbackend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.nine.booknutsbackend.domain.archive.ArchiveBoard;
@@ -19,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 public class Board {
 
     @Id
@@ -66,4 +68,7 @@ public class Board {
     @JsonIgnore
     private List<SeriesBoard> seriesBoards = new ArrayList<>();
 
+    public Board() {
+
+    }
 }

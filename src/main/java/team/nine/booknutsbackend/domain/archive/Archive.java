@@ -1,6 +1,7 @@
 package team.nine.booknutsbackend.domain.archive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.nine.booknutsbackend.domain.User;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 public class Archive {
 
     @Id
@@ -40,4 +42,7 @@ public class Archive {
     @JsonIgnore
     private List<ArchiveBoard> archiveBoardList = new ArrayList<>();
 
+    public Archive() {
+
+    }
 }

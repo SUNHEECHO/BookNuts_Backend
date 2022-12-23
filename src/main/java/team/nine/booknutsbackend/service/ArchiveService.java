@@ -56,7 +56,7 @@ public class ArchiveService {
     //아카이브 생성
     @Transactional
     public Archive createArchive(MultipartFile file, Archive archive) {
-        archive.setImgUrl(awsS3Service.uploadImg(file, "archive-"));
+        //archive.setImgUrl(awsS3Service.uploadImg(file, "archive-"));
         return archiveRepository.save(archive);
     }
 

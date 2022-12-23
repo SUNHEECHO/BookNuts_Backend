@@ -12,6 +12,12 @@ import javax.persistence.*;
 @Setter
 public class ArchiveBoard {
 
+    public ArchiveBoard(Archive archive, Board board, User owner) {
+        this.archive = archive;
+        this.board = board;
+        this.owner = owner;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long archiveBoardId;
@@ -28,4 +34,7 @@ public class ArchiveBoard {
     @JoinColumn(name = "owner")
     private User owner;
 
+    public ArchiveBoard() {
+
+    }
 }

@@ -19,8 +19,8 @@ class UserServiceTest @Autowired constructor(
     private val passwordEncoder: PasswordEncoder,
 ) {
 
-    val userRequest = UserRequest("loginId", "password", "name", "nickname", "ss@naver.com", null)
-    val userEntity = User(1L, "loginId", passwordEncoder.encode("password"), "name", "nickname", "ss2@naver.com", null, null, null, true, null, null, null, null, null, null)
+    private val userRequest = UserRequest("loginId", "password", "name", "nickname", "ss@naver.com", null)
+    private val userEntity = User(1L, "loginId", passwordEncoder.encode("password"), "name", "nickname", "ss2@naver.com", null, null, null, true, null, null, null, null, null, null)
 
     @AfterEach
     fun clean() {
