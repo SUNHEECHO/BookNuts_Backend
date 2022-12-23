@@ -2,9 +2,7 @@ package team.nine.booknutsbackend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +21,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 @JsonIgnoreProperties(value = {"authorities"})
 public class User implements UserDetails {
 
@@ -56,6 +55,10 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    public User() {
+
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

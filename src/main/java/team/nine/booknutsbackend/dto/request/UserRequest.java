@@ -17,6 +17,15 @@ public class UserRequest {
     String profileImgUrl;
     String roles;
 
+    public UserRequest(String loginId, String password, String username, String nickname, String email, String profileImgUrl) {
+        this.loginId = loginId;
+        this.password = password;
+        this.username = username;
+        this.nickname = nickname;
+        this.email = email;
+        this.profileImgUrl = profileImgUrl;
+    }
+
     public static User userRequest(UserRequest userRequest) {
         User user = new User();
         user.setLoginId(userRequest.getLoginId());

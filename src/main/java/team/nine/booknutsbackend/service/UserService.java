@@ -28,7 +28,7 @@ public class UserService {
     //회원가입
     @Transactional
     public User join(MultipartFile file, User user) {
-        user.setProfileImgUrl(awsS3Service.uploadImg(file, user.getNickname() + "-"));
+//        user.setProfileImgUrl(awsS3Service.uploadImg(file, user.getNickname() + "-"));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
