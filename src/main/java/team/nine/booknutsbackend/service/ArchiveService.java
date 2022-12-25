@@ -22,6 +22,7 @@ import team.nine.booknutsbackend.repository.BoardRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -80,8 +81,7 @@ public class ArchiveService {
     @Transactional
     public void addPostToArchive(Long archiveId, Long boardId, User user) {
         Archive archive = getArchive(archiveId);
-        if (archive.getOwner() != user) throw new NoAuthException();
-
+        if (!Objects.equals(archive.getOwner().getUserId(), user.getUserId())) throw new NoAuthException();
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
 
@@ -99,20 +99,20 @@ public class ArchiveService {
     @Transactional
     public void deleteArchive(Long archiveId, User user) {
         Archive archive = getArchive(archiveId);
-        if (archive.getOwner() != user) throw new NoAuthException();
+        if (!Objects.equals(archive.getOwner().getUserId(), user.getUserId())) throw new NoAuthException();
 
         List<ArchiveBoard> archiveBoards = archiveBoardRepository.findByArchive(archive);
         archiveBoardRepository.deleteAll(archiveBoards);
         archiveRepository.delete(archive);
 
-        awsS3Service.deleteImg(archive.getImgUrl());  //기존 이미지 버킷에서 삭제
+        //awsS3Service.deleteImg(archive.getImgUrl());  //기존 이미지 버킷에서 삭제
     }
 
     //아카이브 내의 게시글 삭제
     @Transactional
     public void deleteArchivePost(Long archiveId, Long boardId, User user) {
         Archive archive = getArchive(archiveId);
-        if (archive.getOwner() != user) throw new NoAuthException();
+        if (!Objects.equals(archive.getOwner().getUserId(), user.getUserId())) throw new NoAuthException();
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
@@ -125,7 +125,7 @@ public class ArchiveService {
     @Transactional
     public Archive updateArchive(Long archiveId, ArchiveRequest archiveRequest, User user) {
         Archive archive = getArchive(archiveId);
-        if (archive.getOwner() != user) throw new NoAuthException();
+        if (!Objects.equals(archive.getOwner().getUserId(), user.getUserId())) throw new NoAuthException();
 
         if (archiveRequest.getTitle() != null) archive.setTitle(archiveRequest.getTitle());
         if (archiveRequest.getContent() != null) archive.setContent(archiveRequest.getContent());
@@ -140,7 +140,7 @@ public class ArchiveService {
         for (Archive archive : archiveList) {
             List<ArchiveBoard> archiveBoards = archiveBoardRepository.findByArchive(archive);
             archiveBoardRepository.deleteAll(archiveBoards);
-            awsS3Service.deleteImg(archive.getImgUrl());  //기존 이미지 버킷에서 삭제
+//            awsS3Service.deleteImg(archive.getImgUrl());  //기존 이미지 버킷에서 삭제
         }
         archiveRepository.deleteAll(archiveList);
     }

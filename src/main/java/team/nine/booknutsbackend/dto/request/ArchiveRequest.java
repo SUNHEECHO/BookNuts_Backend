@@ -11,6 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class ArchiveRequest {
 
+    public ArchiveRequest(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     @NotBlank String title;
     @NotBlank String content;
 

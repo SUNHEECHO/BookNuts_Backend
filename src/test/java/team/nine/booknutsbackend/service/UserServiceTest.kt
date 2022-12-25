@@ -97,22 +97,5 @@ class UserServiceTest @Autowired constructor(
         assertThat(result).isFalse
     }
 
-    //Todo: test 불가능? 다른 방법 알아보기
-    //BCrypt 라는 해시 함수를 사용한 구현체는 단순히 해시를 하는것 뿐만 아니라 Salt 를 넣는 작업까지 하므로,
-    //입력값이 같음에도 불구하고 매번 다른 encoded된 값을 return 해주게 된다.
-//
-//    @Test
-//    fun updatePasswordTest() {
-//        //given
-//        val user = userRepository.save(userEntity)
-//        //when
-//        userService.updatePassword("password", "newPassword", user)
-//
-//        //then
-//        val result = userRepository.findAll()[0]
-//        assertThat(result.password).isEqualTo(passwordEncoder.encode("newPassword"))
-//
-//    }
-
     //Todo: profileImage update 테스트 필요 (s3 연결 후에)
 }

@@ -4,12 +4,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import team.nine.booknutsbackend.domain.Board
 import team.nine.booknutsbackend.domain.User
 import team.nine.booknutsbackend.domain.archive.Archive
 import team.nine.booknutsbackend.domain.archive.ArchiveBoard
+import team.nine.booknutsbackend.dto.request.ArchiveRequest
+import team.nine.booknutsbackend.exception.archive.ArchiveDuplicateException
 import team.nine.booknutsbackend.repository.ArchiveBoardRepository
 import team.nine.booknutsbackend.repository.ArchiveRepository
 import team.nine.booknutsbackend.repository.BoardRepository
@@ -98,5 +101,105 @@ class ArchiveServiceTest @Autowired constructor(
         assertThat(results).hasSize(1)
         assertThat(results[0].archiveCnt).isEqualTo(1)
         assertThat(results[0].boardId).isEqualTo(board.boardId)
+    }
+
+    @Test
+    @DisplayName("아카이브에 게시글 추가가 정상 작동")
+    fun addPostToArchiveTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        val board = boardRepository.save(Board(1L, "boardTitle", "boardContent", LocalDateTime.now().toString(), "bookTItle", "bookCotent", "bookAuthor", "bookGenre", user, null, null, null, null))
+        val archive = archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+
+        //when
+        archiveService.addPostToArchive(archive.archiveId, board.boardId, user)
+        val result = archiveBoardRepository.findAll()
+
+         //then
+        assertThat(result[0].archive.archiveId).isEqualTo(archive.archiveId)
+        assertThat(result[0].board.boardId).isEqualTo(board.boardId)
+        assertThat(result[0].owner.userId).isEqualTo(user.userId)
+    }
+
+    @Test
+    @DisplayName("아카이브에 게시글 추가가 에러 발생")
+    fun addPostToArchiveExceptionTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        val board = boardRepository.save(Board(1L, "boardTitle", "boardContent", LocalDateTime.now().toString(), "bookTItle", "bookCotent", "bookAuthor", "bookGenre", user, null, null, null, null))
+        val archive = archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+        archiveBoardRepository.save(ArchiveBoard(archive, board, user))
+
+        //when & then
+        val message = assertThrows<ArchiveDuplicateException> {
+            archiveService.addPostToArchive(archive.archiveId, board.boardId, user)
+        }.message
+        assertThat(message).isEqualTo("이미 아카이브에 존재하는 게시글 아이디입니다.")
+    }
+
+    @Test
+    @DisplayName("아카이브 삭제가 정상 작동")
+    fun deleteArchiveTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        val board = boardRepository.save(Board(1L, "boardTitle", "boardContent", LocalDateTime.now().toString(), "bookTItle", "bookCotent", "bookAuthor", "bookGenre", user, null, null, null, null))
+        val archive = archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+        archiveBoardRepository.save(ArchiveBoard(archive, board, user))
+
+        //when
+        archiveService.deleteArchive(archive.archiveId, user)
+        val result = archiveBoardRepository.findAll()
+        val result2 = archiveRepository.findAll()
+
+        //then
+        assertThat(result).hasSize(0)
+        assertThat(result2).hasSize(0)
+    }
+
+    @Test
+    @DisplayName("아카이브 내의 게시글 삭제가 정상 작동")
+    fun deleteArchivePostTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        val board = boardRepository.save(Board(1L, "boardTitle", "boardContent", LocalDateTime.now().toString(), "bookTItle", "bookCotent", "bookAuthor", "bookGenre", user, null, null, null, null))
+        val archive = archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+        archiveBoardRepository.save(ArchiveBoard(archive, board, user))
+
+        //when
+        archiveService.deleteArchivePost(archive.archiveId, board.boardId, user)
+        val result = archiveBoardRepository.findAll()
+
+        //then
+        assertThat(result).hasSize(0)
+    }
+
+    @Test
+    @DisplayName("아카이브 수정이 정상 작동")
+    fun updateArchiveTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        val archive = archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+        val archiveRequest = ArchiveRequest("new Title", "new Content")
+
+        //then
+        val result = archiveService.updateArchive(archive.archiveId, archiveRequest, user)
+
+        //when
+        assertThat(result.content).isEqualTo("new Content")
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 시 회원의 모든 아카이브 삭제 정상 작동")
+    fun deleteAllUserArchiveTest() {
+        //given
+        val user = userRepository.save(User(1L, "loginId", "password", "name", "nickname", "ss2@naver.com", null, null, null, true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        archiveRepository.save(Archive(1L, "title", "content", user, null, LocalDateTime.now().toString(), null))
+
+        //when
+        archiveService.deleteAllArchive(user)
+        val result = archiveRepository.findAll()
+
+        //then
+        assertThat(result).hasSize(0)
     }
 }
