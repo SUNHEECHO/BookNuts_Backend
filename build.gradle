@@ -1,0 +1,56 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'team.nine'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	enabled = false
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	//Java Annotation Library
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//database
+	implementation 'mysql:mysql-connector-java'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java'
+
+	//Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+
+	//jjwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	//email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//aws-s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
