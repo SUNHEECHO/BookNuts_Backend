@@ -64,11 +64,9 @@ public class BoardService {
         List<Follow> followList = followRepository.findByFollower(user);
         List<Board> boards = new ArrayList<>();
         for (Follow follow : followList) {
-            List<Board> tmp = boardRepository.findByUser(follow.getFollowing());
+            List<Board> tmp = boardRepository.findByUserOrderByBoardId(follow.getFollowing());
             if (!tmp.isEmpty()) boards.addAll(tmp);
         }
-
-        boards.sort((a, b) -> (int) (a.getBoardId() - b.getBoardId())); //boardId 순 정렬
         return boards;
     }
 
@@ -88,7 +86,7 @@ public class BoardService {
     //특정 유저의 게시글 목록 조회
     @Transactional(readOnly = true)
     public List<BoardResponse> getBoardList(User owner) {
-        List<Board> boards = boardRepository.findByUser(owner);
+        List<Board> boards = boardRepository.findByUserOrderByBoardId(owner);
         List<BoardResponse> boardDtoList = new ArrayList<>();
 
         for (Board board : boards) {
@@ -103,8 +101,8 @@ public class BoardService {
     @Transactional
     public Board updatePost(Long boardId, BoardRequest boardRequest, User user) {
         Board board = getPost(boardId);
-        if (board.getUser() != user) throw new NoAuthException();
-
+        //if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) throw new NoAuthException();
+        if(!board.getUser().equals(user)) throw new NoAuthException();
         if (boardRequest.getTitle() != null) board.setTitle(boardRequest.getTitle());
         if (boardRequest.getContent() != null) board.setContent(boardRequest.getContent());
 

@@ -1,5 +1,6 @@
 package team.nine.booknutsbackend.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 public class Follow {
 
     @Id
@@ -24,4 +26,7 @@ public class Follow {
     @JoinColumn(name = "follower")
     private User follower;
 
+    public Follow() {
+
+    }
 }

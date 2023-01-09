@@ -16,6 +16,15 @@ public class BoardRequest {
     @NotBlank String bookImgUrl;
     @NotBlank String bookGenre;
 
+    public BoardRequest(String title, String content, String bookTitle, String bookAuthor, String bookImgUrl, String bookGenre) {
+        this.title = title;
+        this.content = content;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.bookImgUrl = bookImgUrl;
+        this.bookGenre = bookGenre;
+    }
+
     public static Board boardRequest(BoardRequest boardRequest, User user) {
         Board board = new Board();
         board.setTitle(boardRequest.getTitle());
