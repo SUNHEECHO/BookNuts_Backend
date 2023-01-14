@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
@@ -123,4 +124,17 @@ public class User implements UserDetails {
         return enabled;
     } //계정 활성화 여부 (true : 활성화)
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return enabled == user.enabled && Objects.equals(userId, user.userId) && loginId.equals(user.loginId) && password.equals(user.password) && username.equals(user.username) && nickname.equals(user.nickname) && email.equals(user.email) && refreshToken.equals(user.refreshToken) && profileImgUrl.equals(user.profileImgUrl) && roles.equals(user.roles) && requestedDeleteAt.equals(user.requestedDeleteAt) && archiveBoards.equals(user.archiveBoards) && hearts.equals(user.hearts) && nutsList.equals(user.nutsList) && followers.equals(user.followers) && followings.equals(user.followings);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, loginId, password, username, nickname, email, refreshToken, profileImgUrl, roles, enabled, requestedDeleteAt, archiveBoards, hearts, nutsList, followers, followings);
+    }
 }

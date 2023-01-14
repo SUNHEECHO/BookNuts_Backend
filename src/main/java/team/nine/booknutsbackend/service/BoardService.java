@@ -17,6 +17,7 @@ import team.nine.booknutsbackend.repository.FollowRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -101,8 +102,8 @@ public class BoardService {
     @Transactional
     public Board updatePost(Long boardId, BoardRequest boardRequest, User user) {
         Board board = getPost(boardId);
-        //if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) throw new NoAuthException();
-        if(!board.getUser().equals(user)) throw new NoAuthException();
+        if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) throw new NoAuthException();
+//        if(!board.getUser().equals(user)) throw new NoAuthException();
         if (boardRequest.getTitle() != null) board.setTitle(boardRequest.getTitle());
         if (boardRequest.getContent() != null) board.setContent(boardRequest.getContent());
 
@@ -113,7 +114,8 @@ public class BoardService {
     @Transactional
     public void deletePost(Long boardId, User user) {
         Board board = getPost(boardId);
-        if (board.getUser() != user) throw new NoAuthException();
+        if(!Objects.equals(board.getUser().getUserId(), user.getUserId())) throw new NoAuthException();
+        //if (board.getUser() != user) throw new NoAuthException();
         boardRepository.delete(board);
     }
 
