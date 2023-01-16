@@ -103,7 +103,6 @@ public class BoardService {
     public Board updatePost(Long boardId, BoardRequest boardRequest, User user) {
         Board board = getPost(boardId);
         if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) throw new NoAuthException();
-//        if(!board.getUser().equals(user)) throw new NoAuthException();
         if (boardRequest.getTitle() != null) board.setTitle(boardRequest.getTitle());
         if (boardRequest.getContent() != null) board.setContent(boardRequest.getContent());
 

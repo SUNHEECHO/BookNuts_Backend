@@ -1,5 +1,6 @@
 package team.nine.booknutsbackend.domain.debate;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.nine.booknutsbackend.domain.User;
@@ -12,12 +13,14 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 public class DebateRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateRoomId;
 
+    //Todo: BookEntity와 관계형성으로 변경
     @Column(length = 100, nullable = false)
     private String bookTitle;
 
@@ -58,4 +61,7 @@ public class DebateRoom {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public DebateRoom() {
+
+    }
 }
