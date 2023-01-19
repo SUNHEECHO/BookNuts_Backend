@@ -26,8 +26,7 @@ public class FollowController {
     @PutMapping("/{followingId}")
     public ResponseEntity<Object> follow(@PathVariable Long followingId, Principal principal) {
         User follower = userService.findUserByEmail(principal.getName());
-        User following = userService.findUserById(followingId);
-        followService.follow(following, follower);
+        followService.follow(followingId, follower.getUserId());
 
         Map<String, String> map = new HashMap<>();
         map.put("result", "팔로우 완료");
@@ -37,9 +36,8 @@ public class FollowController {
     //언팔로우
     @DeleteMapping("/{unfollowingId}")
     public ResponseEntity<Object> unfollow(@PathVariable Long unfollowingId, Principal principal) {
-        User follower = userService.findUserByEmail(principal.getName());    //나(팔로워)
-        User unfollowing = userService.findUserById(unfollowingId);
-        followService.unfollow(unfollowing, follower);
+        User follower = userService.findUserByEmail(principal.getName());
+        followService.unfollow(unfollowingId, follower.getUserId());
 
         Map<String, String> map = new HashMap<>();
         map.put("result", "언팔로우 완료");
@@ -49,7 +47,7 @@ public class FollowController {
     //팔로잉 리스트
     @GetMapping("/followinglist/{userId}")
     public ResponseEntity<List<FollowResponse>> findMyFollowingList(@PathVariable Long userId, Principal principal) {
-        User currentLoginId = userService.findUserByEmail(principal.getName());
+        userService.findUserByEmail(principal.getName());
         User user = userService.findUserById(userId);
         return new ResponseEntity<>(followService.getMyFollowingList(user), HttpStatus.OK);
     }
@@ -57,7 +55,7 @@ public class FollowController {
     //팔로워 리스트
     @GetMapping("/followerlist/{userId}")
     public ResponseEntity<List<FollowResponse>> findMyFollowerList(@PathVariable Long userId, Principal principal) {
-        User currentLoginId = userService.findUserByEmail(principal.getName());
+        userService.findUserByEmail(principal.getName());
         User user = userService.findUserById(userId);
         return new ResponseEntity<>(followService.getMyFollowerList(user), HttpStatus.OK);
     }

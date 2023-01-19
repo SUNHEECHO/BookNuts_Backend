@@ -9,10 +9,13 @@ import team.nine.booknutsbackend.dto.response.FollowResponse;
 import team.nine.booknutsbackend.exception.follow.AlreadyFollowingException;
 import team.nine.booknutsbackend.exception.follow.CannotFollowException;
 import team.nine.booknutsbackend.exception.follow.NotFollowingException;
+import team.nine.booknutsbackend.exception.user.UserNotFoundException;
 import team.nine.booknutsbackend.repository.FollowRepository;
+import team.nine.booknutsbackend.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
@@ -20,27 +23,31 @@ import java.util.List;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final UserService userService;
+
+    private final UserRepository userRepository;
 
     //팔로우
     @Transactional
-    public void follow(User following, User follower) {
+    public void follow(Long followingUserId, Long followerUserId) {
         Follow follow = new Follow();
 
-        if (followRepository.findByFollowingAndFollower(following, follower).isPresent())
+        if (followRepository.findByFollowingUserIdAndFollowerUserId(followingUserId, followerUserId).isPresent())
             throw new AlreadyFollowingException();
-        if (following == follower) throw new CannotFollowException();
+        if (Objects.equals(followingUserId, followerUserId)) throw new CannotFollowException();
 
-        follow.setFollowing(userService.findUserById(following.getUserId()));
-        follow.setFollower(userService.findUserById(follower.getUserId()));
+        User followingUser = userRepository.findById(followingUserId).orElseThrow(UserNotFoundException::new);
+        User followerUser = userRepository.findById(followerUserId).orElseThrow(UserNotFoundException::new);
+
+        follow.setFollowing(followingUser);
+        follow.setFollower(followerUser);
 
         followRepository.save(follow);
     }
 
     //언팔로우
     @Transactional
-    public void unfollow(User unfollowing, User follower) {
-        Follow follow = followRepository.findByFollowingAndFollower(unfollowing, follower)
+    public void unfollow(Long unfollowingUserId, Long followerUserId) {
+        Follow follow = followRepository.findByFollowingUserIdAndFollowerUserId(unfollowingUserId, followerUserId)
                 .orElseThrow(NotFollowingException::new);
         followRepository.delete(follow);
     }
