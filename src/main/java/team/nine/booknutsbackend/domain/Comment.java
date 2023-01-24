@@ -1,5 +1,6 @@
 package team.nine.booknutsbackend.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 public class Comment {
 
     @Id
@@ -43,4 +45,7 @@ public class Comment {
     @JoinColumn(name = "boardId")
     private Board board;
 
+    public Comment() {
+
+    }
 }

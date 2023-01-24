@@ -12,6 +12,10 @@ public class CommentRequest {
 
     @NotBlank String content;
 
+    public CommentRequest(String content) {
+        this.content = content;
+    }
+
     public static Comment commentRequest(CommentRequest commentRequest, User user, Board board) {
         Comment comment = new Comment();
         comment.setContent(commentRequest.getContent());
