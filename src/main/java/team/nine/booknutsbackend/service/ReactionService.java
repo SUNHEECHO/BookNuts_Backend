@@ -13,6 +13,7 @@ import team.nine.booknutsbackend.repository.HeartRepository;
 import team.nine.booknutsbackend.repository.NutsRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,11 +28,11 @@ public class ReactionService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
 
-        List<Nuts> nutsList = user.getNutsList();
-        Nuts targetNuts = nutsRepository.findByBoardAndUser(board, user);
+        List<Long> nutsList = user.getNutsList().stream().map(Nuts::getNutsId).toList();
+        Optional<Nuts> targetNuts = nutsRepository.findByBoard_BoardIdAndUser_UserId(board.getBoardId(), user.getUserId());
 
-        if (nutsList.contains(targetNuts)) {
-            nutsRepository.delete(targetNuts);
+        if (targetNuts.isPresent() && nutsList.contains(targetNuts.get().getNutsId())) {
+            nutsRepository.delete(targetNuts.get());
             return "넛츠 취소";
         }
 
@@ -47,11 +48,11 @@ public class ReactionService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
 
-        List<Heart> hearts = user.getHearts();
-        Heart targetHeart = heartRepository.findByBoardAndUser(board, user);
+        List<Long> hearts = user.getHearts().stream().map(Heart::getHeartId).toList();
+        Optional<Heart> targetHeart = heartRepository.findByBoard_BoardIdAndUser_UserId(board.getBoardId(), user.getUserId());
 
-        if (hearts.contains(targetHeart)) {
-            heartRepository.delete(targetHeart);
+        if (targetHeart.isPresent() && hearts.contains(targetHeart.get().getHeartId())) {
+            heartRepository.delete(targetHeart.get());
             return "좋아요 취소";
         }
 
